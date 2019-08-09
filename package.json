@@ -5,8 +5,19 @@
   "repository": "git@github.com:Axosoft/glo-webhooks-examples.git",
   "author": "Axosoft, LLC",
   "license": "MIT",
+  "scripts": {
+    "build": "babel server.js -d dist",
+    "start": "babel-node server.js",
+    "ngrok": "ngrok http 8080"
+  },
   "dependencies": {
     "body-parser": "^1.18.3",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "github-api": "^3.2.2",
+    "ngrok": "^3.2.4"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
   }
 }
