@@ -1,4 +1,4 @@
-import request from 'request';
+import request from 'request-promise';
 import config from '../config';
 
 const {board, columns, labels} = config.glo;
@@ -43,9 +43,7 @@ const send = (card, body) => {
     };
     const options = {url, headers, body};
 
-    request.post(options, (err, response, body) => {
-        console.log(body);
-    });
+    return request.post(options);
 };
 
 /**
@@ -78,8 +76,8 @@ export function setColumnLabel(card, sender) {
         labels.push({'id': targetLabelId});
     }
 
-    send(card, JSON.stringify({labels}));
-};
+    return send(card, JSON.stringify({labels}));
+}
 
 /**
  * ラベル変更時に対応するカラムに移動する処理（ボツ案）
@@ -95,8 +93,8 @@ export function moveColumnFromLabel(card, addedLabels = []) {
 
     const column_id = LABEL_COLUMN_MAP.get(targetLabel.id);
 
-    send(card, JSON.stringify({ column_id }))
-};
+    return send(card, JSON.stringify({ column_id }))
+}
 
 /**
  * カード追加時は必ず作業中カラムにする
@@ -108,5 +106,5 @@ export function verifyOnAdded(card) {
     }
 
     const column_id = columns.progress;
-    send(card, JSON.stringify({ column_id }))
-};
+    return send(card, JSON.stringify({ column_id }))
+}
