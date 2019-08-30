@@ -17,7 +17,7 @@ const LIMITED_COLUMNS = config.admin.limited.columns.map(key => columns[key]);
 const rollback = (card) => {
     const targetLabel = card.labels.find(label => LABEL_COLUMN_MAP.get(label.id));
     const column_id = targetLabel ? LABEL_COLUMN_MAP.get(targetLabel.id) : columns.progress;
-    send(card, JSON.stringify({column_id}));
+    return send(card, JSON.stringify({column_id}));
 };
 
 /**
@@ -53,18 +53,17 @@ const send = (card, body) => {
  */
 export function setColumnLabel(card, sender) {
     if (isLimitedOperation(card) && !config.admin.users.includes(sender.username)) {
-        rollback(card);
-        return;
+        return rollback(card);
     }
 
     if (!COLUMN_LABEL_MAP.has(card.column_id)) {
-        return;
+        return Promise.resolve();
     }
 
     const targetLabelId = COLUMN_LABEL_MAP.get(card.column_id);
     const isAlready = !!targetLabelId && card.labels.some(label => label.id === targetLabelId);
     if (isAlready) {
-        return;
+        return Promise.resolve();
     }
 
     // 移動先のカラムに対応するラベル以外は削除
@@ -88,7 +87,7 @@ export function setColumnLabel(card, sender) {
 export function moveColumnFromLabel(card, addedLabels = []) {
     const targetLabel = addedLabels.find(label => LABEL_COLUMN_MAP.get(label.id));
     if (!targetLabel) {
-        return;
+        return Promise.resolve();
     }
 
     const column_id = LABEL_COLUMN_MAP.get(targetLabel.id);
@@ -102,7 +101,7 @@ export function moveColumnFromLabel(card, addedLabels = []) {
  */
 export function verifyOnAdded(card) {
     if (card.column_id === columns.progress) {
-        return;
+        return Promise.resolve();
     }
 
     const column_id = columns.progress;

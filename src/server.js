@@ -64,8 +64,8 @@ app.post('*', (req, res) => {
         // }
     }
 
-    p.then(body => {
-        console.log(body);
+    p.then(res => {
+        // console.log(res);
     }).catch(err => {
         console.error(err);
     }).finally(() => {
