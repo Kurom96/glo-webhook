@@ -12,6 +12,7 @@
     "serve": "firebase serve --only functions",
     "deploy": "firebase deploy --only functions",
     "start": "babel-node ./src/debug.js",
+    "gloconfig": "babel-node ./misc/gloconfig.js",
     "ngrok": "ngrok http 8080"
   },
   "engines": {
