@@ -7,12 +7,12 @@
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf functions",
-    "copy": "cp src/config_honban.json functions/config.json && cp package.json functions",
+    "copy": "cp src/*.json functions && cp package.json functions",
     "build": "yarn clean && babel ./src -d ./functions && yarn copy",
-    "serve": "firebase serve --only functions",
+    "start": "firebase serve --only functions",
     "deploy": "firebase deploy --only functions",
-    "start": "babel-node ./src/debug.js",
     "gloconfig": "babel-node ./misc/gloconfig.js",
+    "express": "babel-node ./src/debug.js",
     "ngrok": "ngrok http 8080"
   },
   "engines": {
@@ -24,6 +24,8 @@
     "firebase-admin": "^8.4.0",
     "firebase-functions": "^3.2.0",
     "github-api": "^3.2.2",
+    "googleapis": "39",
+    "moment": "^2.24.0",
     "ngrok": "^3.2.4",
     "request-promise": "^4.2.4"
   },

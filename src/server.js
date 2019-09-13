@@ -2,11 +2,12 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import crypto from 'crypto';
 
-import config from './config';
-import { verifyOnAdded, setColumnLabel } from './API/Card';
+import { config } from 'firebase-functions';
+import { verifyOnAdded, setColumnLabel } from './API/card';
+import {insertEvent} from "./API/calendar";
 
 const createSignature = (buf) => {
-    const hmac = crypto.createHmac('sha1', config.glo.secret);
+    const hmac = crypto.createHmac('sha1', config().glo.secret);
     hmac.update(buf, 'utf-8');
     return 'sha1=' + hmac.digest('hex');
 };
@@ -41,7 +42,7 @@ app.use(verifyWebhookSignature);
 app.post('*', (req, res) => {
     console.log('Received Glo webhook payload', new Date());
     console.log('Event', req.headers['x-gk-event']);
-    // console.log(req.body);
+    // console.log(JSON.stringify(req.body));
     // if (req.body.labels && req.body.labels.added) {
     //     console.log(req.body.labels.added);
     // }
@@ -55,6 +56,7 @@ app.post('*', (req, res) => {
 
         if (req.body.action === 'moved_column') {
             p = setColumnLabel(req.body.card, req.body.sender);
+            p = p.then(() => insertEvent(req.body.card));
         }
 
         // ラベル変更時に対応するカラムに移動する処理

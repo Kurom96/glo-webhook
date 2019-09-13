@@ -1,14 +1,15 @@
 import request from 'request-promise';
-import config from '../config';
+import setting from '../setting';
+import { config } from 'firebase-functions';
 
-const {board, columns, labels} = config.glo;
+const { board, columns, labels } = setting.glo;
 
 // 同じキー文字列を持つカラムとラベルを連結させるための Map
 const COLUMN_LABEL_MAP = new Map(Object.keys(columns).map(key => [columns[key], labels[key] || null]));
 const LABEL_COLUMN_MAP = new Map(Object.keys(labels).map(key => [labels[key], columns[key] || null]));
 
 // 管理者しか移動できないカラム
-const LIMITED_COLUMNS = config.admin.limited.columns.map(key => columns[key]);
+const LIMITED_COLUMNS = setting.admin.limited.columns.map(key => columns[key]);
 
 /**
  * 不正なカラム移動が検知された。
@@ -37,9 +38,9 @@ const isLimitedOperation = (card) => {
 const send = (card, body) => {
     const url = `https://gloapi.gitkraken.com/v1/glo/boards/${board}/cards/${card.id}`;
     const headers = {
-        'Authorization': `Bearer ${config.glo.token}`,
+        'Authorization': `Bearer ${config().glo.token}`,
         'Content-type': 'application/json',
-        'external-tokens': JSON.stringify({'GitHub': config.github.token})
+        'external-tokens': JSON.stringify({'GitHub': config().github.token})
     };
     const options = {url, headers, body};
 
@@ -52,7 +53,7 @@ const send = (card, body) => {
  * @param sender
  */
 export function setColumnLabel(card, sender) {
-    if (isLimitedOperation(card) && !config.admin.users.includes(sender.username)) {
+    if (isLimitedOperation(card) && !setting.admin.users.includes(sender.username)) {
         return rollback(card);
     }
 

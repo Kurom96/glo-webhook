@@ -1,0 +1,27 @@
+{
+  "admin": {
+    "users": [
+      "Kurom96"
+    ],
+    "limited": {
+      "columns": ["accept", "reject"]
+    }
+  },
+  "glo": {
+    "board": "5d42a2ee5179dc000fd0408a",
+    "columns": {
+      "progress": "5d42a2ee5179dc000fd0408d",
+      "request": "5d42a3475afb5f000f406ba4",
+      "accept": "5d42a3500a6e1e000fc07210",
+      "reject": "5d42a34d459614000f734cca"
+    },
+    "labels": {
+      "request": "5d47ebc7647fd9000f1c30e0",
+      "accept": "5d42a5080a6e1e000fc0722f",
+      "reject": "5d42a5105179dc000fd040d5"
+    }
+  },
+  "calendar": {
+    "scheduleColumn": "accept"
+  }
+}
