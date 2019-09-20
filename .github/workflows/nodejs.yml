@@ -3,14 +3,32 @@ name: Node CI
 on: [push]
 
 jobs:
+  job1:
+    name: JOB ONE
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print a greeting
+        env:
+          NAME: Taro
+        run: |
+          echo Hello my name is $NAME.
+  job2:
+    name: JOB TWO
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print a greeting
+        env:
+          NAME: Hanako
+        run: |
+          echo Hello my name is $NAME.
   build:
-
+    needs: [job1, job2]
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macOS-latest]
-        node-version: [10.x, 12.x]
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+        node-version: [10.x]
 
     steps:
     - uses: actions/checkout@v1
@@ -22,5 +40,3 @@ jobs:
       run: |
         npm install
         npm run build --if-present
-      env:
-        CI: true
