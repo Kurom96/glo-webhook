@@ -1,12 +1,12 @@
 import request from 'request-promise';
-import config from '../src/config';
 import {createInterface} from 'readline';
+import {config} from 'firebase-functions';
 
 const getRequest = url => {
     const headers = {
-        'Authorization': `Bearer ${config.glo.token}`,
+        'Authorization': `Bearer ${config().glo.token}`,
         'Content-type': 'application/json',
-        'external-tokens': JSON.stringify({'GitHub': config.github.token})
+        'external-tokens': JSON.stringify({'GitHub': config().github.token})
     };
     const options = {url, headers};
     return request.get(options);
@@ -19,7 +19,7 @@ const getBoards = () => {
 
 const askWitchBoard = bodyString => {
     const body = JSON.parse(bodyString);
-    body.forEach((board, index) => console.log(`${index + 1}: ${board.name}`));
+    body.forEach((board, index) => console.log(`${index + 1}: ${board.name}: ${board.id}`));
     console.log("x: やっぱやめる");
 
     return new Promise((resolve, reject) => {

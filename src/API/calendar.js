@@ -1,7 +1,6 @@
 import { google } from 'googleapis';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { config } from 'firebase-functions';
-import credentials from '../credentials-calendar';
 import setting from "../setting";
 
 // スケジュール登録するカラムID
@@ -9,13 +8,12 @@ const SCHEDULE_COLUMN_ID = setting.glo.columns[setting.calendar.scheduleColumn];
 
 /**
  * イベント登録
- * @param {Object} resource
+ * @param {Object} card
  * @return {Promise<void>}
  */
 export function insertEvent(card) {
     return new Promise((resolve, reject) => {
         if (card.column_id !== SCHEDULE_COLUMN_ID) {
-            console.log("承認カラムではない。");
             resolve();
             return;
         }
@@ -47,11 +45,9 @@ export function insertEvent(card) {
 
         calendar.events.insert(options, (err, res) => {
             if (err) {
-                console.log("カレンダーに追加失敗", err);
                 reject(err);
                 return;
             }
-            console.log("カレンダーに追加された", res);
             resolve(res);
         });
     });
@@ -63,8 +59,8 @@ export function insertEvent(card) {
  * @private
  */
 function _createOAuth2Client() {
-    const {client_secret, client_id, redirect_uris} = credentials.installed;
-    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+    const {client_secret, client_id} = config().google.calendar.credentials;
+    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret);
     oAuth2Client.setCredentials({
         "refresh_token": config().google.calendar.refresh_token,
         "scope": "https://www.googleapis.com/auth/calendar",
@@ -73,7 +69,14 @@ function _createOAuth2Client() {
     return oAuth2Client;
 }
 
+/**
+ * カードからカレンダーに登録するリソースを作成する
+ * @param card
+ * @return {{summary: *, reminders: {useDefault: boolean}, attendees: {email: string}[], start: {date: string}, description: string, end: {date: string}}}
+ * @private
+ */
 function _createResourceFromCard(card) {
+    moment.tz.setDefault('Asia/Tokyo');
     const targetDate = moment(card.due_date);
     return {
         summary: card.name,

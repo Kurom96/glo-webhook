@@ -1,12 +1,11 @@
 import fs from 'fs';
 import {google} from 'googleapis';
-import credentials from '../src/credentials-calendar';
 import getAccessToken from './getAccessToken';
 import {config} from 'firebase-functions';
 
 const TOKEN_PATH = 'token.json';
 
-console.log(config());
+listEvents();
 
 /**
  * 認証（ブラウザ）
@@ -14,8 +13,8 @@ console.log(config());
  */
 function getAuthorize() {
     return new Promise((resolve, reject) => {
-        const {client_secret, client_id, redirect_uris} = credentials.installed;
-        const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+        const {client_secret, client_id, redirect_uri} = config().google.calendar.credentials;
+        const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uri);
 
         fs.readFile(TOKEN_PATH, (err, token) => {
             if (err) {
@@ -40,7 +39,6 @@ function getAuthorize() {
 
 /**
  * 一覧取得
- * @param oAuth2Client
  */
 export async function listEvents() {
     const oAuth2Client = await getAuthorize().catch(() => null);
@@ -63,7 +61,7 @@ export async function listEvents() {
         if (events.length) {
             console.log('イベント10個');
             events.map((event, index) => {
-                const start = event.start.dateTime || event.start.date;
+                // const start = event.start.dateTime || event.start.date;
                 // console.log(`${start} - ${event.summary}`);
                 console.log(JSON.stringify(event));
             })
@@ -115,5 +113,3 @@ export async function insertEvent() {
         console.log(JSON.stringify(res));
     });
 }
-
-// listEvents();
