@@ -12,15 +12,18 @@ jobs:
           NAME: Taro
         run: |
           echo Hello my name is $NAME.
+      - name: Print a greeting 2
+        run: |
+          echo Good morning $NAME!
   job2:
     name: JOB TWO
     runs-on: ubuntu-latest
     steps:
       - name: Print a greeting
         env:
-          NAME: Hanako
+          NAME2: Hanako
         run: |
-          echo Hello my name is $NAME.
+          echo $NAME, Hello my name is $NAME2.
   build:
     needs: [job1, job2]
     runs-on: ${{ matrix.os }}
